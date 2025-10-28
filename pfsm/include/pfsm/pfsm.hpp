@@ -1,38 +1,45 @@
 #pragma once
 
 #include "pfsm/state.hpp"
+#include "pfsm/event.hpp"
 #include "pfsm/blackboard/blackboard.hpp"
 
 #include <unordered_map>
-#include <unordered_set>
+#include <vector>
 #include <string>
 #include <memory>
+
+typedef std::vector<std::pair<std::string, float>>              MapStateProbability;
+typedef std::unordered_map<std::string, MapStateProbability>    EventTransitions;
+typedef std::unordered_map<std::string, EventTransitions>       TransitionMatrix;
 
 namespace pfsm {
 
     class PFSM {
+    
+    private:
+
+        Blackboard bb_;
+        std::unordered_map<std::string, std::shared_ptr<State>> states_;
+        std::string current_state_;
+        TransitionMatrix tm_;
+
+        bool initial_state_set_ = false;
+        bool entering = true;
+
+    std::string select_next_state(const std::string& trigger_event);
+
     public:
         PFSM() = default;
         ~PFSM() = default;
 
-        void add_state(std::string state_name, std::unique_ptr<State> state);
-
-        void add_transition(const std::string & current_state,
-                            const std::string & transition,
-                            const std::string & next_state);
-
-        void add_transitions(const std::string & current_state,
-                             const std::unordered_map<std::string, std::string> & transitions);
-        
+        void add_state(std::string state_name, std::shared_ptr<State> state);
         void set_initial_state(std::string state_name);
+    void add_transitions_by_event(std::string origin_state, EventTransitions event_transition);
 
         void execute();
 
-        bool is_finished();
-
         std::string get_current_state();
-
-        std::string get_pfsm_outcome();
 
         template <typename T>
         void blackboard_set(const std::string & key, T* value){
@@ -42,26 +49,7 @@ namespace pfsm {
         template <typename T>
         T* blackboard_get(const std::string & key){
             return this->bb_.get<T>(key);
-        }
-    
-    private:
-        
-        void check_transition();
-        bool initial_state_not_set();
-
-        Blackboard bb_;
-        
-        std::unordered_map<std::string, std::unique_ptr<State>> states_;
-        std::unordered_set<std::string> outcomes_;
-        std::string current_state_;
-        std::string last_outcome_;
-
-        class InitialState : public State {
-        public:
-            InitialState();
-            std::string act(Blackboard &blackboard) override;
-        };
-        
+        } 
     };
 
 };
