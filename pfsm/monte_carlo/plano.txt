@@ -1,0 +1,33 @@
+Uma simulacao de monte carlo é uma técnica computacional que utiliza várias e repetidas "amostras" para estimar a probabilidade de diferentes saídas de um processo que não pode ser facilmente previsto por causa de variáveis aleatórias.
+A ideia dessa simulacao é variar as condições inciais, disturbances, eventos aleatorios,...
+e contabilizar o numero de sucessos, falhas, transições, etc...
+
+LOOP:
+1. resetar a simula~amostras
+2. Escolher as condições inciais aleatoriamente
+    vento, posicao, orientação, bateria, noisy, ...
+3. iniciar a missao até sucesso ou falha
+4. contabilizar as informações
+
+-------------
+
+o gazebo é um pouco lento
+possibilidades:
+    real_time_update_rate
+    max_step_size
+    simplificar a simulação
+    usar o modo headless
+
+obs:
+some aspects (PX4 timing, ROS2 nodes, ...) may depend on real time
+
+
+-----
+
+Automatizar isso:
+python para:
+1. iniciar e resetar o gazebo
+2. Escolher os parametros
+3. iniciar a missao com a pfsm
+4. monitorar e logar resultados
+5. repetir para n rodadas
